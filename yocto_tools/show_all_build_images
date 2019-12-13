@@ -1,0 +1,14 @@
+#!/bin/bash
+name=$(basename $0)
+source ./common || {
+  echo "${name}: could not source 'common', aborting..." ; exit 1
+}
+
+(
+cd ${YOCTO_PFX}
+for IMG in $(ls meta*/recipes*/images/*.bb)
+do
+	echo "$(basename ${IMG})"
+done
+)
+

@@ -1,0 +1,24 @@
+A small and simple tool collection for Yocto
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+FIRST:
+In the 'common' script, pl Ensure you set these variables correctly:
+ YOCTO_PFX=/opt/yocto/poky : set to the yocto workspace directory on your system
+ BUILD_DIR=build           : set to the yocto workspace 'build' dir on your system
+
+
+The files curr available are:
+
+common : contains common vars and a few utility functions
+ 
+host_setup_4yocto : helper script to setup an Ubuntu host system for Yocto
+
+README  : this file
+
+show_all_build_images : simple script that shows all possible build targets
+                        for bitbake
+						(eg. bitbake core-image-minimal)
+
+yct_recipe_gen  : a simple yocto 'recipe generator' script; as of now, it's
+                  in development and very simplistic; might nevertheless
+				  prove a bit useful
+				  (Of course, Yocto provides the full-fledged recipetool util).

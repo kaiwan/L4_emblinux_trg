@@ -1,0 +1,160 @@
+#!/bin/bash
+# host_setup
+# Setup an (Ubuntu) Linux host for Yocto Project (YP)
+# (c) 2019 kaiwanTECH
+# ref: https://www.yoctoproject.org/docs/2.7.1/brief-yoctoprojectqs/brief-yoctoprojectqs.html
+name=$(basename $0)
+#YOCTO_DIR=/opt/base_yocto
+
+DUMMY_RUN=1
+#-------------- r u n c m d -------------------------------------------
+# Display and run the provided command.
+# Parameter 1 : the command to run
+runcmd()
+{
+SEP="------------------------------"
+[ $# -eq 0 ] && return
+echo "${SEP}
+$@"
+[ ${DUMMY_RUN} -eq 1 ] && return
+eval $@
+}
+
+get_hostpkg_up2date()
+{
+echo "
+-----------------------------------------------------------------
+Getting host packages up-to-date now ..."
+runcmd "sudo apt update"
+runcmd "sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib \
+     build-essential chrpath socat cpio python python3 python3-pip python3-pexpect \
+     xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev \
+     xterm"
+}
+
+# We use the 'poky' distro as a base reference
+clone_yocto_poky()
+{
+pwd
+echo "
+-----------------------------------------------------------------
+Will now clone yocto into dir ${YOCTO_DIR}"
+runcmd "cd ${YOCTO_DIR}"
+runcmd "git clone git://git.yoctoproject.org/poky"
+[ ! -d ${YOCTO_DIR}/poky ] && {
+  echo "${name}: the dir \"${YOCTO_DIR}/poky\" isn't there, something's gone wrong, aborting..."
+  exit 1
+}
+cd ${YOCTO_DIR}/poky
+echo "${name}: We shall now show all the git tags and ask you to select one
+ Press [Enter] to continue..."
+read
+#git fetch tags
+echo "Pick a tag: (scroll through all and then type a tag name, eg. yocto-3.0)"
+git tag
+echo "Pick a tag: (now type a tag name, eg. yocto-3.0)"
+read mytag
+
+MYBRANCH=mybranch01    # UPDATE as required
+runcmd "git checkout tags/${mytag} -b ${MYBRANCH}"
+runcmd "git status"
+}
+
+project_specific_setup()
+{
+echo "
+-----------------------------------------------------------------
+Project-specific setup for Yocto:"
+cd ${TOPDIR}/poky
+# copy existing layers if any into the poky/<build-dir>/
+#                     conf
+#                     meta-prjlayer1
+#                     meta-prjlayer2
+#                       [...]
+#                     meta-prjlayern
+
+# next, adjust paths if required in <build-dir>/conf/bblayers.conf
+
+# next, run
+source oe-init-build-env
+  # now in poky/<build-dir>/
+bitbake-layers show-layers || exit 1
+# and confirm all's ok
+
+# Will perhaps need to clone some layers like, for example for the Raspberry Pi:
+#  /opt/yocto/poky/meta-raspberrypi
+#   ref: https://layers.openembedded.org/layerindex/branch/master/layer/meta-raspberrypi/
+# under the poky/ folder
+# Refer the 'meta raspberrypi documentation' PDF/site
+#  http://meta-raspberrypi.readthedocs.io/en/latest/
+# We keep this commented...
+#cd ${TOPDIR}/poky
+#git clone http://git.yoctoproject.org/meta-raspberrypi
+}
+
+# Perform the build
+perform_build()
+{
+echo "
+-----------------------------------------------------------------
+${name}: Performing yocto bitbake build now
+-----------------------------------------------------------------
+bitbake ${POKY_IMAGE_TO_BUILD}
+"
+POKY_IMAGE_TO_BUILD=core-image-minimal    # or, core-image-full-cmdline
+cd ${YOCTO_DIR}/poky
+source oe-init-build-env
+bitbake ${POKY_IMAGE_TO_BUILD}
+}
+
+
+### 'main' here
+
+[ $# -ne 1 ] && {
+  echo "Usage: ${name} yocto-dir (to create and populate)"
+  exit 1
+}
+[ -d $1 ] && {
+  echo "${name}: the dir specified \"$1\" already exists, won't overwrite, aborting.."
+  exit 1
+}
+YOCTO_DIR=$(realpath $1)
+echo "YOCTO_DIR = ${YOCTO_DIR}"
+mkdir -p ${YOCTO_DIR} || exit 1
+
+TOPDIR=$(pwd)
+get_hostpkg_up2date
+
+cd ${YOCTO_DIR} || exit 1
+#pwd
+echo "
+-----------------------------------------------------------------
+${name}: Yocto setup 1
+-----------------------------------------------------------------
+We're now ready to clone the yocto project onto your dir \"${YOCTO_DIR}\" ...
+Press [Enter] to proceed, ^C to abort ..."
+read
+clone_yocto_poky
+
+#project_specific_setup
+
+echo "
+-----------------------------------------------------------------
+${name}: Yocto setup 2
+-----------------------------------------------------------------
+Now, go to the yocto location
+ ${YOCTO_DIR}/poky
+run this:
+ source oe-init-build-env
+
+Then edit and configure 
+ ${YOCTO_DIR}/poky/build/conf/local.conf
+
+Change the varable MACHINE to, for example:
+ MACHINE ?= \"qemuarm64\"
+save the file, and then proceed with the build.
+"
+
+#perform_build
+
+exit 0
