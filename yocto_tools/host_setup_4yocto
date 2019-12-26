@@ -6,7 +6,7 @@
 name=$(basename $0)
 #YOCTO_DIR=/opt/base_yocto
 
-DUMMY_RUN=1
+DUMMY_RUN=0
 #-------------- r u n c m d -------------------------------------------
 # Display and run the provided command.
 # Parameter 1 : the command to run
