@@ -7,6 +7,8 @@
 ### UPDATE as required
 # These vars have been setup simply to 'test'; pl MODIFY them
 # according to your yocto project workspace
+#YOCTO_PFX=/opt/yocto/poky
+#YOCTO_PFX=~/0tmp/myprj   # for local testing ...
 YOCTO_PFX=/opt/yocto/poky
 BUILD_DIR=build
 #----------------------------------------------------------------------
