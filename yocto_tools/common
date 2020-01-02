@@ -13,6 +13,12 @@ YOCTO_PFX=/opt/yocto/poky
 BUILD_DIR=build
 #----------------------------------------------------------------------
 
+#export DEBUG=0
+dprint()
+{
+[ ${DEBUG} -eq  0 ] && return
+echo "<D> $@"
+}
 
 #-------------- r u n c m d -------------------------------------------
 # Display and run the provided command.
@@ -89,4 +95,3 @@ pick_latest_initramfs()
 {
 pick_latest_file cpio
 }
-
