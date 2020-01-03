@@ -202,7 +202,6 @@ ls -l "${recipe_file}"
 
 ### 'main'
 
-echo "dbg = ${DEBUG}"
 which yad >/dev/null || {
   echo "${name}: 'yad' (yet another dialog) util missing, pl install package and retry..."
   exit 1
@@ -219,7 +218,7 @@ Pl setup the yocto workspace first and then run this tool...
 Tips:
 - override the YOCTO_DIR default by setting (export) the env var YOCTO_DIR
   prior to running this tool
-- for 'debug' mode, set env var DEBUG=1 while running"
+- for 'debug' mode, set the first parameter as '-d'"
   exit 1
 }
 
@@ -239,13 +238,24 @@ to running this tool and retry...
 Now press [Enter] to continue or ^C to abort ... "
 read -r
 
+# usage check
 [ $# -lt 2 ] && {
-  echo "Usage: ${name} meta-<layername> recipe-name"
-  echo "Eg. ${name} meta-mylayer helloworld"
+  echo "Usage: ${name} [-d] meta-<layername> recipe-name"
+  echo "Eg. ${name} meta-mylayer helloworld
+ -d implies 'run in debug mode'"
   exit 1
 }
-LAYER=$1
-RCP_NAME=$2
+# arg processing
+DEBUG=0
+if [ $# -eq 3 ] && [ "$1" = "-d" ] ; then
+  DEBUG=1
+  LAYER=$2
+  RCP_NAME=$3
+else
+  LAYER=$1
+  RCP_NAME=$2
+fi
+dprint "DEBUG = ${DEBUG}, LAYER = ${LAYER}, RCP_NAME = ${RCP_NAME}"
 
 #-- Validity checks
 layer_metatoken=$(echo "${LAYER}" |cut -d"-" -f1)
