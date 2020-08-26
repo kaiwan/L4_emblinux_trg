@@ -1,7 +1,8 @@
 #!/bin/bash
 name=$(basename $0)
 source ./common || {
-  echo "${name}: could not source 'common', aborting..." ; exit 1
+  echo "${name}: warning: could not source 'common'..." #; exit 1
+  YOCTO_PFX=..   # assuming you're in the build dir
 }
 
 (

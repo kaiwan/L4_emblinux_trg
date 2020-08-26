@@ -2,7 +2,7 @@
 # host_setup
 # Setup an (Ubuntu) Linux host for Yocto Project (YP)
 # (c) 2019 kaiwanTECH
-# ref: https://www.yoctoproject.org/docs/2.7.1/brief-yoctoprojectqs/brief-yoctoprojectqs.html
+# ref: https://www.yoctoproject.org/docs/latest/brief-yoctoprojectqs/brief-yoctoprojectqs.html
 name=$(basename $0)
 
 #-------------- r u n c m d -------------------------------------------
@@ -48,7 +48,7 @@ cd ${YOCTO_DIR}/poky
 echo "${name}: We shall now show all the git tags and ask you to select one
  Press [Enter] to continue..."
 read
-#git fetch tags
+git fetch --tags
 echo "Pick a tag: (scroll through all and then type a tag name, eg. yocto-3.0)"
 git tag
 echo "Pick a tag: (now type a tag name, eg. yocto-3.0)"

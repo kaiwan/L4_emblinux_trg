@@ -210,15 +210,18 @@ which yad >/dev/null || {
 [ -z "${YOCTO_DIR}" ] && YOCTO_DIR=${YOCTO_PFX}/${BUILD_DIR}
 export YOCTO_DIR
 [ ! -d "${YOCTO_DIR}" ] && {
-  echo "${name}: ERROR: the 'yocto' build area (auto) specified
+  echo "${name}: ERROR: the default 'yocto' build area specified
  \"${YOCTO_DIR}\"
-does not exist (the default value is in the 'common' script).
+does not exist (this default value is in the 'common' script).
 
 Pl setup the yocto workspace first and then run this tool...
 Tips:
-- override the YOCTO_DIR default by setting (export) the env var YOCTO_DIR
+- override the YOCTO_DIR default by setting the env var YOCTO_DIR
   prior to running this tool
-- for 'debug' mode, set the first parameter as '-d'"
+- for 'debug' mode, set the first parameter as '-d'
+Eg.
+  YOCTO_DIR=/opt/yocto_intel/poky/build ./${name} -d meta-mylayer1 afirstrecipe
+"
   exit 1
 }
 
