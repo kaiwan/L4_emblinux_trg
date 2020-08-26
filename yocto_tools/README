@@ -1,24 +1,28 @@
 A small and simple tool collection for Yocto
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-FIRST:
-In the 'common' script, pl Ensure you set these variables correctly:
+
+*** FIRSTLY ***
+In the 'common' script, pl *ensure* you set these variables correctly:
  YOCTO_PFX=/opt/yocto/poky : set to the yocto workspace directory on your system
- BUILD_DIR=build           : set to the yocto workspace 'build' dir on your system
+ BUILD_DIR=build_aarch32   : set to the yocto workspace 'build' dir on your system
 
+(Above, it's shown as set; by default to a Qemu Aarch32 (ARM-32) demo build).
 
-The files curr available are:
+The files currently available are:
 
-common : contains common vars and a few utility functions
+common                : contains common vars and a few utility functions
  
-host_setup_4yocto : helper script to setup an Ubuntu host system for Yocto
+host_setup_4yocto     : helper script to setup an Ubuntu host system for Yocto
 
-README  : this file
+README                : this file
 
 show_all_build_images : simple script that shows all possible build targets
-                        for bitbake
-						(eg. bitbake core-image-minimal)
+                        for bitbake (eg. bitbake core-image-minimal)
 
-yct_recipe_gen  : a simple yocto 'recipe generator' script; as of now, it's
-                  in development and very simplistic; might nevertheless
-				  prove a bit useful
-				  (Of course, Yocto provides the full-fledged recipetool util).
+qemuarm_demo_builddir : has the content of the demo Qemu Aarch32 Yocto build project,
+                        primarily the content of the <build>/conf/ dir
+
+yct_recipe_gen        : a simple yocto 'recipe generator' script; as of now, it's
+                        in development and very simplistic; might nevertheless
+			 prove a bit useful
+			 (of course, Yocto provides the full-fledged recipetool util).
