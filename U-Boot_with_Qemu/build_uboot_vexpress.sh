@@ -10,7 +10,7 @@
 #
 # (C) Kaiwan NB.
 # kaiwanTECH.
-# 
+# MIT License 
 name=$(basename $0)
 
 ##################### UPDATE as required
@@ -20,7 +20,7 @@ export CXX=arm-linux-gnueabi-  # toolchain prefix ; tc to use; expect that the P
 ###------###
 
 export DIR=$(pwd)
-export UBOOT_FOLDER=../src-u-boot/u-boot-2019.07
+#export UBOOT_FOLDER=../src-u-boot/u-boot-2019.07
 #export UBOOT_FOLDER=${DIR}/u-boot-2013.10
 
 source ./common.sh || {
@@ -51,26 +51,36 @@ conf_and_build_uboot()
 {
 cd ${UBOOT_FOLDER}
 local jobs=$((${CPU_CORES}*2))
+local stat=0
+
+[ ! -f configs/${CONFIG} ] && {
+  echo "U-Boot configuration file \"configs/${CONFIG}\" not found? aborting ..."
+  exit 1
+}
+echo "Config file: ${CONFIG}"
 
 ShowTitle "Cleaning U-Boot ..."
-make -j${jobs} ARCH=arm CROSS_COMPILE=${CXX} clean
+runcmd "make -j${jobs} ARCH=arm CROSS_COMPILE=${CXX} clean"
 
 ShowTitle "Configuring U-Boot for ${TARGET_DESC} ..."
-make ARCH=arm CROSS_COMPILE=${CXX} ${CONFIG} || {
+runcmd "make ARCH=arm CROSS_COMPILE=${CXX} ${CONFIG}"
+[ $? -ne 0 ] && {
   stat=$?
   echo "U-Boot configuration failed (status ${stat}) ! Aborting ..."
   exit ${stat}
 }
 
-ShowTitle "Attempting 'menuconfig' now ..."
-make ARCH=arm CROSS_COMPILE=${CXX} menuconfig || {
+ShowTitle "Attempting 'menuconfig' target now ..."
+runcmd "make ARCH=arm CROSS_COMPILE=${CXX} menuconfig"
+[ $? -ne 0 ] && {
   stat=$?
   echo "U-Boot menuconfig failed (status ${stat}) ! Aborting ..."
   exit ${stat}
 }
 
 ShowTitle "Building U-Boot for ${TARGET_DESC} ..."
-make -j${jobs} ARCH=arm CROSS_COMPILE=${CXX} all || {
+runcmd "make -j${jobs} ARCH=arm CROSS_COMPILE=${CXX} all"
+[ $? -ne 0 ] && {
   stat=$?
   echo "U-Boot build failed (status ${stat}) ! Aborting ..."
   exit ${stat}
@@ -85,15 +95,19 @@ cd ${DIR}
 run_it()
 {
 cd ${DIR} || exit 1
-ShowTitle "Running QEMU (will emulate U-Boot image as the kernel) ... (Ctrl-A X to exit QEMU)"
-echo "Doing :: qemu-system-arm -M vexpress-a9 -m 128M -kernel ${UBOOT_FOLDER}/u-boot -nographic"
+which qemu-system-arm >/dev/null || {
+  echo "${name}: qmeu-system-arm missing? Pl install aand retry ..."
+  exit 1
+}
+
+ShowTitle "Running QEMU (will emulate U-Boot image as the kernel) ... (Ctrl-a x to exit QEMU)"
 echo
-qemu-system-arm -M vexpress-a9 -m 128M -kernel ${UBOOT_FOLDER}/u-boot -nographic
+runcmd "qemu-system-arm -M vexpress-a9 -m 128M -kernel ${UBOOT_FOLDER}/u-boot -nographic"
 }
 
 usage()
 {
- echo "Usage: ${name} -c|-r"
+ echo "Usage: ${name} path-to-uboot-src-dir -c|-r"
  echo " -c: Configure and build U-Boot"
  echo " -r: just Run U-Boot (via qemu)"
  exit 1
@@ -109,15 +123,27 @@ which ${CXX}gcc > /dev/null 2>&1 || {
   echo "$name: Cross toolchain does not seem to be valid! PATH issue? Aborting..."
   exit 1
 }
+echo "Cross compiler:
+$(${CXX}gcc --version)
+[OK]
+"
 
-check_folder_AIA ${UBOOT_FOLDER}
-[ $# -ne 1 ] && usage
-
-if [ "$1" = "-c" ] ; then
-  export CPU_CORES=$(getconf -a|grep "_NPROCESSORS_ONLN"|awk '{print $2}')
-  [ -z ${CPU_CORES} ] && CPU_CORES=2
+[ $# -lt 2 ] && {
+  usage
+  exit 1
+}
+UBOOT_FOLDER=$1
+[ ! -d ${UBOOT_FOLDER} ] && {
+  echo "$name: U-Boot source dir \"${UBOOT_FOLDER}\" invalid? aborting..."
+  exit 1
+}
+echo "U-Boot dir :: ${UBOOT_FOLDER}"
+if [ "$2" = "-c" ] ; then
+  export CPU_CORES=$(nproc)
+  #export CPU_CORES=$(getconf -a|grep "_NPROCESSORS_ONLN"|awk '{print $2}')
+  [ -z "${CPU_CORES}" ] && CPU_CORES=2
   conf_and_build_uboot
-elif [ "$1" = "-r" ] ; then
+elif [ "$2" = "-r" ] ; then
   run_it
 else
   usage

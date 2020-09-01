@@ -79,3 +79,15 @@ GetIP()
 	ifconfig $1 >/dev/null 2>&1 || return 2
 	ifconfig $1 |grep 'inet addr'|awk '{print $2}' |cut -f2 -d':'
 }
+
+# runcmd
+# Parameters
+#   $1 ... : params are the command to run
+runcmd()
+{
+[ $# -eq 0 ] && return
+tput bold #; fg_yellow
+echo "$@"
+tput sgr0  # reset
+eval "$@"
+}
