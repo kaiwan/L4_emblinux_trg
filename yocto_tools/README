@@ -21,6 +21,7 @@ show_all_build_images : simple script that shows all possible build targets
 
 qemuarm_demo_builddir : has the content of the demo Qemu Aarch32 Yocto build project,
                         primarily the content of the <build>/conf/ dir
+						(the project is on the custom Yocto VM provided to participants)
 
 yct_recipe_gen        : a simple yocto 'recipe generator' script; as of now, it's
                         in development and very simplistic; might nevertheless
