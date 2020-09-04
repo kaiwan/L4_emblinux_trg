@@ -144,7 +144,7 @@ ${name}: Yocto setup 2
 Now, go to the yocto location
  ${YOCTO_DIR}/poky
 run this:
- source oe-init-build-env
+ source oe-init-build-env [builddir-name]
 
 Then edit and configure 
  ${YOCTO_DIR}/poky/build/conf/local.conf
