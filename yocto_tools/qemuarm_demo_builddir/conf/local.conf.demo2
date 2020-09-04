@@ -266,3 +266,30 @@ PACKAGECONFIG_append_pn-qemu-system-native = " sdl"
 # track the version of this file when it was generated. This can safely be ignored if
 # this doesn't mean anything to you.
 CONF_VERSION = "1"
+
+#----------------------------------------------------------------------
+# Demo 1 : user a/c + SSH
+#----------------------------------------------------------------------
+#-- adding two user accounts
+INHERIT += "extrausers"
+# useradd:
+#  -p => passwd seen in plain text in /etc/shadow
+#  -P => passwd seen in encrypted form in /etc/shadow
+EXTRA_USERS_PARAMS = "\
+  useradd -P welcome yo; \
+  usermod -P yct.o root; \
+  "
+
+#----------------------------------------------------------------------
+# Demo 1.2 : replace openssh with dropbear
+#----------------------------------------------------------------------
+#CORE_IMAGE_EXTRA_INSTALL += "openssh"
+# Could instead rm openssh and replace it w/ dropbear; it
+# provides a lightweight ssh server & client!
+IMAGE_FEATURES_remove = " openssh"
+CORE_IMAGE_EXTRA_INSTALL += "dropbear"
+
+#----------------------------------------------------------------------
+# Demo 2 : add the GNU ps, strace and file utils
+#----------------------------------------------------------------------
+CORE_IMAGE_EXTRA_INSTALL += "procps strace file"
