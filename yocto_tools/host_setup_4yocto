@@ -45,13 +45,19 @@ runcmd "git clone git://git.yoctoproject.org/poky"
   exit 1
 }
 cd ${YOCTO_DIR}/poky
-echo "${name}: We shall now show all the git tags and ask you to select one
+echo "
+${name}: We shall now show all the git tags and ask you to select one
  Press [Enter] to continue..."
 read
 git fetch --tags
 echo "Pick a tag: (scroll through all and then type a tag name, eg. yocto-3.0)"
 git tag
-echo "Pick a tag: (now type a tag name, eg. yocto-3.0)"
+echo "Pick a tag: (now type a tag name, eg. dunfell)
+
+IMP TIP: select the latest stable release (f.e. dunfell-nnn, ...)
+(can find the release name here: https://www.yoctoproject.org/ )
+
+"
 read mytag
 
 MYBRANCH=mybranch01    # UPDATE as required
