@@ -1,0 +1,30 @@
+#!/bin/bash
+# query_toaster
+name=$(basename $0)
+usage()
+{
+echo "Usage: ${name} [toaster-port#]"
+}
+
+
+### 'main'
+
+# ASSUMES that port # is 8400; can override with first param
+PORT=8400
+if [ $# -ge 1 -a "$1" = "-h" ] ; then
+  usage
+  exit 0
+elif [ $# -ge 1 ] ; then
+  PORT=$1
+fi
+
+# Check health first
+health=$(curl -s http://localhost:${PORT}/health |grep "<body>" |cut -d"<" -f2)
+if [ "${health}" != "body>Ok" ] ; then
+  echo "Toaster health check failed" ; exit 1
+else
+  #echo "Toaster health check OK"
+  true
+fi
+
+curl -s http://localhost:${PORT}/toastergui/api/building | jq '.'
