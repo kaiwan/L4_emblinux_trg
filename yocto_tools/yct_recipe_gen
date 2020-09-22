@@ -3,6 +3,23 @@
 # A very simple Yocto recipe generator script.
 # (c) Kaiwan N Billimoria, kaiwanTECH
 # License: dual MIT | Apache
+#
+#----------------------------------------------------------------------
+# Example: if you run this script to create a meta layer named 'meta-myprj'
+# and, within it, a 'recipe' / package called 'test1' with, typically:
+#  ./yct_recipe_gen meta-myprj test1
+# this is the dir structure it generates, along with the layer.conf, files
+# and test1.bb recipe files generated!
+#
+# meta-myprj/
+# ├── conf
+# │   └── layer.conf
+# └── recipes-myprj
+#     └── test1
+#         ├── files
+#         └── test1.bb
+# 
+#----------------------------------------------------------------------
 name=$(basename "$0")
 PFX=$(dirname "$(which "$0")")    # dir in which the common code and tools reside
 source "${PFX}"/common || {
@@ -31,7 +48,7 @@ mkdir -p conf
 rm -f conf/layer.conf 2>/dev/null
 touch conf/layer.conf
 
-# TODO : tune layer prio, compat
+# TODO : tune layer prio (curr set to 10), compat
 #cat <<- @EOF@ > ${conf_file}
 cat <<- @EOF@ > conf/layer.conf
 	# We have a conf and classes directory, add to BBPATH
@@ -46,10 +63,11 @@ cat <<- @EOF@ > conf/layer.conf
 	BBFILE_PRIORITY_${layer_token2} = "10"
 
 	LAYER_DEPENDS_${layer_token2} = "core"
-	LAYERSERIES_COMPAT_${layer_token2} = "thud warrior zeus"
+	## TIP: UPDATE with later Yocto release names!
+	LAYERSERIES_COMPAT_${layer_token2} = "thud warrior zeus dunfell"
 @EOF@
 ls -l conf/layer.conf
-}
+} # end setup_conf_layer_file()
 
 #-- Populate the meta-<lyr> / recipes-<rcp> / files  directory with reqd files
 add_to_files_dir()
@@ -86,7 +104,7 @@ done
 
 ls -l "${RCP_FILES_DIR}"/
 echo
-}
+} # end add_to_files_dir()
 
 #-- Generate the meta-<lyr> / recipes-<rcp> / <rcp>.bb recipe file
 gen_recipe_file()
@@ -187,17 +205,17 @@ do_compile () {
 }
 
 do_install () {
-	# Specify install commands here
-	# f.e.  install -d -m 0755 \${D}/etc/init.d
-	# Tip: to generate a soft link, first cd to the dir and then create it;
-	# f.e.
-	# cd ${D}/etc/rc5.d
-	# ln -s ../init.d/myprg_install.sh S99myprg
+	# Specify install commands here; examples below:
+	# (1) create a dir /etc/init.d with:
+	#  install -d -m 0755 \${D}/etc/init.d
+	# (2) Tip: to generate a soft link, first cd to the dir and then create it;
+	#  cd ${D}/etc/rc5.d
+	#  ln -s ../init.d/myprg_install.sh S99myprg
 	:
 }
 @EOF@
 ls -l "${recipe_file}"
-}
+} # end gen_recipe_file()
 
 
 ### 'main'
@@ -245,7 +263,7 @@ read -r
 [ $# -lt 2 ] && {
   echo "Usage: ${name} [-d] meta-<layername> recipe-name"
   echo "Eg. ${name} meta-mylayer helloworld
- -d implies 'run in debug mode'"
+ -d : run in 'debug' mode"
   exit 1
 }
 # arg processing
@@ -263,14 +281,14 @@ dprint "DEBUG = ${DEBUG}, LAYER = ${LAYER}, RCP_NAME = ${RCP_NAME}"
 #-- Validity checks
 layer_metatoken=$(echo "${LAYER}" |cut -d"-" -f1)
 [ "${layer_metatoken}" != "meta" ] && {
-  echo " Your meta-layername is \"${LAYER}\" ; it should be of the form
+  echo " Your meta-layername is \"${LAYER}\" ; convention dictates it should be of the form
  meta-<foo>"
   exit 1 
 }
 export layer_token2=$(echo "${LAYER}" |cut -d"-" -f2)
 [ -z "${layer_token2}" ] && {
-  echo " Your meta-layername is \"${LAYER}\" ; it should be of the form
- meta-<foo> (<foo> part missing)"
+  echo " Your meta-layername is \"${LAYER}\" ; convention dictates it should be of the form
+ meta-<foo> (<foo> part is missing!)"
   exit 1 
 }
 dprint "layer_token2 = ${layer_token2}"
@@ -304,7 +322,7 @@ tree "${YOCTO_DIR}"/"${LAYER}"/recipes-"${layer_token2}"
 cd "${TOP}"
 
 echo "${name}: Don't forget to:
- a) update the recipe file(s)
+ a) verify and update the recipe file(s)
  b) update your ${BUILD_DIR}/conf/bblayers.conf file to include the layer that
     contains this recipe in the build
  c) update your ${BUILD_DIR}/conf/local.conf file to include the recipe in the build
