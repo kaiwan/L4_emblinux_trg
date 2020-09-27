@@ -10,7 +10,7 @@
 #YOCTO_PFX=/opt/yocto-3/poky
 #YOCTO_PFX=~/0tmp/myprj   # for local testing ...
 YOCTO_PFX=/opt/yocto/poky
-BUILD_DIR=build_aarch32
+BUILD_DIR=build_rpi
 #----------------------------------------------------------------------
 
 export DEBUG=0

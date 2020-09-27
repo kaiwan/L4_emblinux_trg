@@ -19,6 +19,9 @@ ofdisk=mmcblk0
   echo "${name}: specified file \"$1\" doesn't exist (or lacking perms?) Aborting..."
   exit 1
 }
+IMG=$(realpath ${1})
+echo "Image file (via realpath) is:"
+ls -lh ${IMG}
 
 lsblk | grep -q "${ofdisk}" || {
   echo "${name}: lsblk failed to find output disk \"${ofdisk}\" ? Aborting..."
@@ -28,7 +31,6 @@ lsblk | grep -q "${ofdisk}" || {
 cmd="sudo umount /dev/${ofdisk}* 2>/dev/null; sync"
 eval "${cmd}"
 
-IMG=${1}
 cmd="sudo dd if=${IMG} of=/dev/${ofdisk} bs=4M"
 echo "
 ${cmd}
@@ -37,6 +39,7 @@ echo "Please CAREFULLY VERIFY that this command is OK to run,
 ESPECIALLY the 'of' device !!!
 
 Press [Enter] to continue, ^C to abort ..." ; read -r
+echo "[+] writing, pl wait ..."
 eval "${cmd}"
 echo "done, sync-ing now..."
 sync

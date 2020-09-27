@@ -284,8 +284,6 @@ EXTRA_USERS_PARAMS = "\
 # Demo 1.2 : replace openssh with dropbear
 #----------------------------------------------------------------------
 #CORE_IMAGE_EXTRA_INSTALL += "openssh"
-# Could instead rm openssh and replace it w/ dropbear; it
-# provides a lightweight ssh server & client!
 IMAGE_FEATURES_remove = " openssh"
 CORE_IMAGE_EXTRA_INSTALL += "dropbear"
 
