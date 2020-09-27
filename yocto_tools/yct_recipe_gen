@@ -155,7 +155,7 @@ DESCRIPTION = ""
 HOMEPAGE = ""
 
 # NOTE: 
-# We set - and comment out - LICENSE to "CLOSED" to allow you to at least start
+# We could set - and comment out - LICENSE to "CLOSED" to allow you to at least start
 # building - if this is not accurate with respect to the licensing of the
 # software being built (it will not be in most cases) you must specify the
 # correct value before using this recipe for anything other than initial
@@ -180,6 +180,11 @@ SRC_URI = "${SRCURI_FILES}
 
 # The FILE_\${PN} addition below is required to avoid the 'installed but not shipped in any package'
 # error; it's left commented out by default
+# TODO :: this requires a FIX :
+#  for now, pl manually change from 
+#   " file://fname \"
+#  to simply
+#   " fname \"
 #FILES_\${PN} += "\${base_prefix}/${SRCURI_FILES}"
 
 IMAGE_FEATURES += ""
@@ -315,19 +320,20 @@ echo
 [ ${WARN} -ne 0 ] && echo "
 *** ${name}: Note: some WARNings were generated ***
 "
-echo "Layer \"$1\" recipe \"${RCP_NAME}\" setup:
+echo "Layer \"${LAYER}\" recipe \"${RCP_NAME}\" setup:
 "
 tree "${YOCTO_DIR}"/"${LAYER}"/recipes-"${layer_token2}"
 
 cd "${TOP}"
 
-echo "${name}: Don't forget to:
+echo "
+${name}: Don't forget to:
  a) verify and update the recipe file(s)
  b) update your ${BUILD_DIR}/conf/bblayers.conf file to include the layer that
     contains this recipe in the build
  c) update your ${BUILD_DIR}/conf/local.conf file to include the recipe in the build
     (typically via a \"IMAGE_INSTALL_append = \" ${RCP_NAME}\"\"
-  TIP: doing a 'bitbake-layers show-recipes | grep xxx' one can check if layer
+  TIP: doing a 'bitbake-layers show-recipes | grep -w xxx' one can check if recipe
   'xxx' is actually installed
  d) rebuild the project with 'bitbake <image-name>' and test
  "
