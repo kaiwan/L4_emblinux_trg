@@ -1,0 +1,10 @@
+--- a/include/configs/rpi.h
++++ b/include/configs/rpi.h
+@@ -187,6 +187,7 @@
+ 
+ #define CONFIG_EXTRA_ENV_SETTINGS \
+        "dhcpuboot=usb start; dhcp u-boot.uimg; bootm\0" \
++       "magicparam=0xbaadd00d\0" \
+        ENV_DEVICE_SETTINGS \
+        ENV_MEM_LAYOUT_SETTINGS \
+        BOOTENV
