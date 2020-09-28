@@ -68,7 +68,8 @@ alias rcpu='ps -o %cpu,%mem,user,pid,rss,stat,time,command -Aww |sort -k1n'
 alias pscpu='ps aux|sort -k3n'
 #------------------------------------------------------------------------------
 
-alias hlt='echo "Halting ...";sync;su -c halt'
+alias hlt='echo "Powering off now ...";sync;su -c poweroff'
+ # 'poweroff' has the R Pi blink it's LED several times and then stay on / off for a bit when done..
 # Ubuntu
 alias sd='su -c /bin/sh'
 
