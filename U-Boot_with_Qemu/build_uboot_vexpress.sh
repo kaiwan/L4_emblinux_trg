@@ -14,7 +14,7 @@
 name=$(basename $0)
 
 ##################### UPDATE as required
-export CXX=arm-linux-gnueabi-  # toolchain prefix ; tc to use; expect that the PATH is setup..
+export CXX=arm-linux-gnueabihf-  # toolchain prefix ; tc to use; expect that the PATH is setup..
 #export CXX=arm-none-eabi-  # toolchain prefix ; tc to use; expect that the PATH is setup..
 #export CXX=arm-none-linux-gnueabi-  # toolchain prefix ; tc to use; expect that the PATH is setup..
 ###------###
