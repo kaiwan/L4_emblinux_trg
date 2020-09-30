@@ -133,13 +133,17 @@ local fname
 local tmpf=$(mktemp)
 ls "${RCP_FILES_DIR}" > "${tmpf}"
 
-local SRCURI_FILES
+# SRCURI : files copied -without the 'file://' prefix;
+# required for the FILES_${PN} += ... directive below
+local SRCURI_FILES SRCURI
 for fname in $(cat "${tmpf}")
 do
   #echo "fname : ${fname}"
   SRCURI_FILES="${SRCURI_FILES} file://${fname}"
+  SRCURI="${SRCURI} ${fname}"
 done
 SRCURI_FILES="${SRCURI_FILES} \\"
+SRCURI="${SRCURI} \\"
 rm -f "${tmpf}"
 #echo "
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -180,12 +184,7 @@ SRC_URI = "${SRCURI_FILES}
 
 # The FILE_\${PN} addition below is required to avoid the 'installed but not shipped in any package'
 # error; it's left commented out by default
-# TODO :: this requires a FIX :
-#  for now, pl manually change from 
-#   " file://fname \"
-#  to simply
-#   " fname \"
-#FILES_\${PN} += "\${base_prefix}/${SRCURI_FILES}"
+#FILES_\${PN} += "\${base_prefix}/${SRCURI}"
 
 IMAGE_FEATURES += ""
 
