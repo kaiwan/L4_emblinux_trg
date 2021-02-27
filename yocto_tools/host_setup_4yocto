@@ -3,7 +3,7 @@
 # Setup an (Ubuntu) Linux host for Yocto Project (YP)
 # (c) 2019 kaiwanTECH
 # ref: https://www.yoctoproject.org/docs/latest/brief-yoctoprojectqs/brief-yoctoprojectqs.html
-name=$(basename $0)
+name=$(basename "$0")
 
 #-------------- r u n c m d -------------------------------------------
 # Display and run the provided command.
@@ -16,7 +16,7 @@ SEP="------------------------------"
 echo "${SEP}
 $@"
 [ ${DUMMY_RUN} -eq 1 ] && return
-eval $@
+eval "$@"
 }
 
 get_hostpkg_up2date()
@@ -34,21 +34,26 @@ runcmd "sudo apt-get install wget git-core diffstat unzip texinfo gcc-multilib \
 # We use the 'poky' distro as a base reference
 clone_yocto_poky()
 {
+[ $# -ne 1 ] && {
+  echo "${name}:clone_yocto_poky() expects the Yocto release name as a parameter"
+  exit 1
+}
 pwd
 echo "
 -----------------------------------------------------------------
 Will now clone yocto into dir ${YOCTO_DIR}"
 runcmd "cd ${YOCTO_DIR}"
-runcmd "git clone git://git.yoctoproject.org/poky"
-[ ! -d ${YOCTO_DIR}/poky ] && {
+runcmd "git clone -b $1 git://git.yoctoproject.org/poky"
+[ ! -d "${YOCTO_DIR}"/poky ] && {
   echo "${name}: the dir \"${YOCTO_DIR}/poky\" isn't there, something's gone wrong, aborting..."
   exit 1
 }
 cd ${YOCTO_DIR}/poky
+
 echo "
 ${name}: We shall now show all the git tags and ask you to select one
  Press [Enter] to continue..."
-read
+read -r
 git fetch --tags
 echo "Pick a tag: (scroll through all and then type a tag name, eg. yocto-3.0)"
 git tag
@@ -58,7 +63,7 @@ IMP TIP: select the latest stable release (f.e. dunfell-nnn, ...)
 (can find the release name here: https://www.yoctoproject.org/ )
 
 "
-read mytag
+read -r mytag
 
 MYBRANCH=mybranch01    # UPDATE as required
 runcmd "git checkout tags/${mytag} -b ${MYBRANCH}"
@@ -115,8 +120,13 @@ bitbake ${POKY_IMAGE_TO_BUILD}
 
 ### 'main' here
 
-[ $# -ne 1 ] && {
-  echo "Usage: ${name} yocto-dir (to create and populate with the Yocto project)"
+[ $# -ne 2 ] && {
+  echo "Usage: ${name} yocto-dir yocto-release-name-to-clone"
+  echo " yocto-dir : to create and populate with the Yocto project"
+  echo " yocto-release-name-to-clone : check latest (or whichever one you want) on https://www.yoctoproject.org/software-overview/downloads/
+   F.e. as of Feb '21 the latest is named 'gatestgarth' (ver 3.2.1 - 2020.12.15)
+   Give the release name, that's it."
+
   exit 1
 }
 [ -d $1 ] && {
@@ -124,7 +134,8 @@ bitbake ${POKY_IMAGE_TO_BUILD}
   exit 1
 }
 YOCTO_DIR=$(realpath $1)
-echo "YOCTO_DIR = ${YOCTO_DIR}"
+YOCTO_RELNAME=$2
+echo "YOCTO_DIR = ${YOCTO_DIR} . Yocto release specified: ${YOCTO_RELNAME}"
 mkdir -p ${YOCTO_DIR} || exit 1
 
 TOPDIR=$(pwd)
@@ -139,7 +150,7 @@ ${name}: Yocto setup 1
 We're now ready to clone the yocto project onto your dir \"${YOCTO_DIR}\" ...
 Press [Enter] to proceed, ^C to abort ..."
 read
-clone_yocto_poky
+clone_yocto_poky ${YOCTO_RELNAME}
 
 #project_specific_setup
 
