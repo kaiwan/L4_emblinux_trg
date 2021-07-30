@@ -120,12 +120,16 @@ bitbake ${POKY_IMAGE_TO_BUILD}
 
 ### 'main' here
 
+### Keep UPDATED !
+LATEST_YOCTO_RELNAME="hardknott"
+LATEST_YOCTO_RELVER="3.3.1"
+###
 [ $# -ne 2 ] && {
   echo "Usage: ${name} yocto-dir yocto-release-name-to-clone"
   echo " yocto-dir : to create and populate with the Yocto project"
   echo " yocto-release-name-to-clone : check latest (or whichever one you want) on https://www.yoctoproject.org/software-overview/downloads/
-   F.e. as of Feb '21 the latest is named 'gatestgarth' (ver 3.2.1 - 2020.12.15)
-   Give the release name, that's it."
+   F.e. the latest (as of this script) is named '${LATEST_YOCTO_RELNAME}' (ver $LATEST_YOCTO_RELVER})
+   Just specify the release name, that's it."
 
   exit 1
 }

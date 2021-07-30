@@ -10,16 +10,28 @@
 #
 name=$(basename $0)
 ofdisk=mmcblk0
+interactive=0
 
-[ $# -ne 1 ] && {
-  echo "Usage: ${name} {path-to-rpi-sdimg-file}"
+[ $# -eq 0 ] && {
+  echo "Usage: ${name} [-i] {path-to-rpi-sdimg-file}
+ -i : interactive mode"
   exit 1
 }
-[ ! -f $1 ] && {
-  echo "${name}: specified file \"$1\" doesn't exist (or lacking perms?) Aborting..."
+if [ $# -eq 1 ]; then
+  IMG=$(realpath ${1})
+elif [ $# -eq 2 ]; then
+  [ "$1" = "-i" ] && interactive=1
+  IMG=$(realpath ${2})
+fi
+
+[ -z "${IMG}" ] && {
+  echo "${name}: image file to burn isn't specified correctly? Aborting..."
   exit 1
 }
-IMG=$(realpath ${1})
+[ ! -f ${IMG} ] && {
+  echo "${name}: specified file \"${IMG}\" doesn't exist (or lacking perms?) Aborting..."
+  exit 1
+}
 echo "Image file (via realpath) is:"
 ls -lh ${IMG}
 
@@ -31,15 +43,20 @@ lsblk | grep -q "${ofdisk}" || {
 cmd="sudo umount /dev/${ofdisk}* 2>/dev/null; sync"
 eval "${cmd}"
 
-cmd="sudo dd if=${IMG} of=/dev/${ofdisk} bs=4M"
+#cmd="sudo time -v dd if=${IMG} of=/dev/${ofdisk} bs=4M"
+cmd="sudo time dd if=${IMG} of=/dev/${ofdisk} bs=4M"
 echo "
 ${cmd}
 "
-echo "Please CAREFULLY VERIFY that this command is OK to run,
+
+[ ${interactive} -eq 1 ] && {
+ echo "Please CAREFULLY VERIFY that this command is OK to run,
 ESPECIALLY the 'of' device !!!
 
 Press [Enter] to continue, ^C to abort ..." ; read -r
-echo "[+] writing, pl wait ..."
+}
+
+echo "[+] $(date): writing, pl wait ..."
 eval "${cmd}"
 echo "done, sync-ing now..."
 sync

@@ -64,7 +64,7 @@ cat <<- @EOF@ > conf/layer.conf
 
 	LAYER_DEPENDS_${layer_token2} = "core"
 	## TIP: UPDATE with later Yocto release names!
-	LAYERSERIES_COMPAT_${layer_token2} = "thud warrior zeus dunfell"
+	LAYERSERIES_COMPAT_${layer_token2} = "thud warrior zeus dunfell gatesgarth"
 @EOF@
 ls -l conf/layer.conf
 } # end setup_conf_layer_file()
