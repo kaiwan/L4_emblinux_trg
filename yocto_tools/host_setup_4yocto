@@ -59,7 +59,7 @@ echo "Pick a tag: (scroll through all and then type a tag name, eg. yocto-3.0)"
 git tag
 echo "Pick a tag: (now type a tag name, eg. dunfell)
 
-IMP TIP: select the latest stable release (f.e. dunfell-nnn, ...)
+IMP TIP: usually, you should select the latest stable release (f.e. honister-nnn, ...)
 (can find the release name here: https://www.yoctoproject.org/ )
 
 "
@@ -105,13 +105,13 @@ bitbake-layers show-layers || exit 1
 # Perform the build
 perform_build()
 {
+POKY_IMAGE_TO_BUILD=core-image-minimal    # or, core-image-full-cmdline
 echo "
 -----------------------------------------------------------------
 ${name}: Performing yocto bitbake build now
 -----------------------------------------------------------------
 bitbake ${POKY_IMAGE_TO_BUILD}
 "
-POKY_IMAGE_TO_BUILD=core-image-minimal    # or, core-image-full-cmdline
 cd ${YOCTO_DIR}/poky
 source oe-init-build-env
 bitbake ${POKY_IMAGE_TO_BUILD}
@@ -121,8 +121,8 @@ bitbake ${POKY_IMAGE_TO_BUILD}
 ### 'main' here
 
 ### Keep UPDATED !
-LATEST_YOCTO_RELNAME="hardknott"
-LATEST_YOCTO_RELVER="3.3.1"
+LATEST_YOCTO_RELNAME="honister"
+LATEST_YOCTO_RELVER="3.4.1"
 ###
 [ $# -ne 2 ] && {
   echo "Usage: ${name} yocto-dir yocto-release-name-to-clone"
@@ -156,6 +156,8 @@ Press [Enter] to proceed, ^C to abort ..."
 read
 clone_yocto_poky ${YOCTO_RELNAME}
 
+# If required, uncomment the below project_specific_setup() func and verify the
+# code to perform prj-specific setup
 #project_specific_setup
 
 echo "
@@ -175,6 +177,7 @@ Change the varable MACHINE to, for example:
 save the file, and then proceed with the build.
 "
 
+# If required, uncomment the below func to build
 #perform_build
 
 exit 0
