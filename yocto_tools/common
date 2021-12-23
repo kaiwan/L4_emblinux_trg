@@ -1,23 +1,43 @@
 #!/bin/bash
 # For my Yocto convenience scripts/tools
 # common - vars, routines, ...
-
-#----------------------------------------------------------------------
-# Yocto
-### UPDATE as required
-# These vars have been setup simply to 'test'; pl MODIFY them
-# according to your yocto project workspace
-#YOCTO_PFX=/opt/yocto-3/poky
-#YOCTO_PFX=~/0tmp/myprj   # for local testing ...
-YOCTO_PFX=/opt/yocto/poky
-BUILD_DIR=build_rpi
-#----------------------------------------------------------------------
+# We *expect* you to have sourced the oe-init-build-env and be in the Yocto build dir
+# It's checked in func setup_env(); so CALL it FIRST...
+# (c) kaiwanTECH
 
 export DEBUG=0
 dprint()
 {
 [ "${DEBUG}" -eq  0 ] && return
 echo "<D> $*"
+}
+
+# Params:
+# $1 : [-q] : optional; if passed, run in quiet mode
+setup_env()
+{
+[ -z "${BUILDDIR}" ] && {
+  echo "${name}: you need to source the Yocto environment first; typically:
+cd <yocto-workspace>
+source oe-init-build-env"
+  exit 1
+}
+[ ! -f conf/local.conf ] && {
+  echo "${name}: we expect you to have sourced the oe-init-build-env and be in the Yocto build dir"
+  exit 1
+}
+export MACH=$(grep -w "^MACHINE" conf/local.conf |tail -n1|cut -d'=' -f2|cut -d'"' -f2)
+
+### !!! ASSUMPTION !!! ###
+IMAGE=core-image-base
+
+[ $# -ge 1 -a "$1" = "-q" ] && return || {
+  echo "${name}:
+BUILDDIR = ${BUILDDIR}
+MACHINE  = ${MACH}
+IMAGE    = ${IMAGE}
+"
+}
 }
 
 #-------------- r u n c m d -------------------------------------------
