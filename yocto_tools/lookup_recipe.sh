@@ -4,7 +4,7 @@ PFX=$(dirname "$(which "$0")")    # dir in which the common code and tools resid
 source "${PFX}"/common || {
   echo "${name}: could not source 'common' script, aborting..." ; exit 1
 }
-setup_env
+setup_env #-q
 
 PKG_MANIFEST=tmp/deploy/licenses/core-image-minimal-${MACH}/package.manifest
 

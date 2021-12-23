@@ -1,15 +1,14 @@
 #!/bin/bash
-name=$(basename $0)
-source ./common || {
-  echo "${name}: warning: could not source 'common'..." #; exit 1
-  YOCTO_PFX=..   # assuming you're in the build dir
+export name=$(basename "$0")
+PFX=$(dirname "$(which "$0")")    # dir in which the common code and tools reside
+source "${PFX}"/common || {
+  echo "${name}: could not source 'common' script, aborting..." ; exit 1
 }
+setup_env #-q
 
-(
-cd ${YOCTO_PFX}
-for IMG in $(ls meta*/recipes*/images/*.bb)
+for IMG in $(ls ../meta*/recipes*/images/*.bb)
 do
 	echo "$(basename ${IMG})"
 done
-)
 
+exit 0
