@@ -6,7 +6,11 @@ source "${PFX}"/common || {
 }
 setup_env #-q
 
-PKG_MANIFEST=tmp/deploy/licenses/core-image-minimal-${MACH}/package.manifest
+PKG_MANIFEST=tmp/deploy/licenses/${IMAGE}-${MACH}/package.manifest
+[ ! -f ${PKG_MANIFEST} ] && {
+  echo "Oops, the package manifest file \"${PKG_MANIFEST}\" isn't found"
+  exit 1
+}
 
 numpkg=$(wc -l ${PKG_MANIFEST} |cut -d" " -f1)
 [ ${numpkg} -le 0 ] && {
@@ -19,5 +23,5 @@ pkg-name: recipe-to-generate-it
 for pkg in $(cat ${PKG_MANIFEST})
 do
   recp=$(oe-pkgdata-util lookup-recipe ${pkg})
-  printf "%-30s: %s\n" ${pkg} ${recp}
+  printf "%-40s: %s\n" ${pkg} ${recp}
 done

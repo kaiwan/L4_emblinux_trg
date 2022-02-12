@@ -29,10 +29,10 @@ source oe-init-build-env"
 export MACH=$(grep -w "^MACHINE" conf/local.conf |tail -n1|cut -d'=' -f2|cut -d'"' -f2)
 
 ### !!! ASSUMPTION !!! ###
-IMAGE=core-image-base
+export IMAGE=core-image-base
 
 [ $# -ge 1 -a "$1" = "-q" ] && return || {
-  echo "${name}:
+  echo "${name}: current workspace/build config:
 BUILDDIR = ${BUILDDIR}
 MACHINE  = ${MACH}
 IMAGE    = ${IMAGE}
