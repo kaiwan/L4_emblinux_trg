@@ -45,7 +45,9 @@ gen_wic_img()
 # If another target dir's soecified w/ --outdir , then it fails with
 #  fstab not present? aborting...
 runcmd_failchk 1 "wic create ${MACH} -e ${REF_IMAGE_TARGET}"  # --outdir $1"
-#ls -lh $1/
+echo "---------------------------------------------------"
+ls -lht ${MACH}-*-mmcblk0.direct*
+echo "---------------------------------------------------"
 }
 
 SDDEV=mmcblk0
