@@ -134,7 +134,7 @@ local tmpf=$(mktemp)
 ls "${RCP_FILES_DIR}" > "${tmpf}"
 
 # SRCURI : files copied -without the 'file://' prefix;
-# required for the FILES_${PN} += ... directive below
+# required for the FILES:${PN} += ... directive below
 local SRCURI_FILES SRCURI
 for fname in $(cat "${tmpf}")
 do
@@ -175,7 +175,8 @@ LIC_FILES_CHKSUM = "\\
 
 # Fill dependencies for this recipe;
 # f.e. = "bash dpkg python"
-RDEPENDS_\${PN} = ""
+#RDEPENDS_\${PN} = ""
+RDEPENDS:\${PN} = ""
 
 # Location of files
 #  Tip: append '; unpack=0 \' to not unpack the file
@@ -185,6 +186,7 @@ SRC_URI = "${SRCURI_FILES}
 # The FILE_\${PN} addition below is required to avoid the 'installed but not shipped in any package'
 # error; it's left commented out by default
 #FILES_\${PN} += "\${base_prefix}/${SRCURI}"
+#FILES:\${PN} += "\${base_prefix}/${SRCURI}"
 
 IMAGE_FEATURES += ""
 

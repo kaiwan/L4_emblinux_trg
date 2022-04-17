@@ -22,7 +22,7 @@ LIC_FILES_CHKSUM = "\
 
 # Fill dependencies for this recipe;
 # f.e. = "bash dpkg python"
-RDEPENDS_${PN} = "bash"
+RDEPENDS:${PN} = "bash"
 
 # Location of files
 #  Tip: append '; unpack=0 \' to not unpack the file
@@ -31,7 +31,7 @@ SRC_URI = " file://0setup_rpi.sh \
 
 # The FILE_${PN} addition below is required to avoid the 'installed but not shipped in any package'
 # error; it's left commented out by default
-FILES_${PN} += "${base_prefix}/ 0setup_rpi.sh \"
+FILES:${PN} += "${base_prefix}/ 0setup_rpi.sh \"
 #FILES_${PN} += "${base_prefix}/ file://0setup_rpi.sh \"
 
 IMAGE_FEATURES += " package-management"
