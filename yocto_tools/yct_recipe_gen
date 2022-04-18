@@ -64,7 +64,8 @@ cat <<- @EOF@ > conf/layer.conf
 
 	LAYER_DEPENDS_${layer_token2} = "core"
 	## TIP: UPDATE with later Yocto release names!
-	LAYERSERIES_COMPAT_${layer_token2} = "thud warrior zeus dunfell gatesgarth"
+	# ref: https://wiki.yoctoproject.org/wiki/Releases
+	LAYERSERIES_COMPAT_${layer_token2} = "dunfell hardknott"
 @EOF@
 ls -l conf/layer.conf
 } # end setup_conf_layer_file()
@@ -174,8 +175,8 @@ LIC_FILES_CHKSUM = "\\
 	"
 
 # Fill dependencies for this recipe;
+# (Note- honister 3.4 onwards, the syntax is of the form x:y not x_y !
 # f.e. = "bash dpkg python"
-#RDEPENDS_\${PN} = ""
 RDEPENDS:\${PN} = ""
 
 # Location of files
@@ -185,7 +186,7 @@ SRC_URI = "${SRCURI_FILES}
 
 # The FILE_\${PN} addition below is required to avoid the 'installed but not shipped in any package'
 # error; it's left commented out by default
-#FILES_\${PN} += "\${base_prefix}/${SRCURI}"
+# (Note- honister 3.4 onwards, the syntax is of the form x:y not x_y !
 #FILES:\${PN} += "\${base_prefix}/${SRCURI}"
 
 IMAGE_FEATURES += ""
@@ -231,7 +232,7 @@ which yad >/dev/null || {
   exit 1
 }
 
-[ -z "${YOCTO_DIR}" ] && YOCTO_DIR=${YOCTO_PFX}/${BUILD_DIR}
+[ -z "${YOCTO_DIR}" ] && YOCTO_DIR=${YOCTO_PFX}
 export YOCTO_DIR
 [ ! -d "${YOCTO_DIR}" ] && {
   echo "${name}: ERROR: the default 'yocto' build area specified
@@ -330,10 +331,10 @@ cd "${TOP}"
 echo "
 ${name}: Don't forget to:
  a) verify and update the recipe file(s)
- b) update your ${BUILD_DIR}/conf/bblayers.conf file to include the layer that
+ b) update your workspace conf/bblayers.conf file to include the layer that
     contains this recipe in the build
- c) update your ${BUILD_DIR}/conf/local.conf file to include the recipe in the build
-    (typically via a \"IMAGE_INSTALL_append = \" ${RCP_NAME}\"\"
+ c) update your workspace conf/local.conf file to include the recipe in the build
+    (typically via a \"IMAGE_INSTALL:append = \" ${RCP_NAME}\"\"
   TIP: doing a 'bitbake-layers show-recipes | grep -w xxx' one can check if recipe
   'xxx' is actually installed
  d) rebuild the project with 'bitbake <image-name>' and test
