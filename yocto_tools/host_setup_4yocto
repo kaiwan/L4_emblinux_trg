@@ -43,7 +43,7 @@ echo "
 -----------------------------------------------------------------
 Will now clone yocto into dir ${YOCTO_DIR}"
 runcmd "cd ${YOCTO_DIR}"
-runcmd "git clone -b $1 git://git.yoctoproject.org/poky"
+runcmd "git clone -b $1 https://git.yoctoproject.org/poky"
 [ ! -d "${YOCTO_DIR}"/poky ] && {
   echo "${name}: the dir \"${YOCTO_DIR}/poky\" isn't there, something's gone wrong, aborting..."
   exit 1
