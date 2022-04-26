@@ -91,7 +91,7 @@ while true ; do
     for RFIL in "${RCPF_ARR[@]}"
     do
       printf "  %40s -> %30s\n" "${RFIL}" "${RCP_FILES_DIR}"
-      cp -a "${RFIL}" "${RCP_FILES_DIR}"/
+      cp --preserve=all "${RFIL}" "${RCP_FILES_DIR}"/
     done
     unset IFS
   }
@@ -287,6 +287,8 @@ else
   LAYER=$1
   RCP_NAME=$2
 fi
+# TODO:
+# Append a $PR = 0.1 to the recipe-name
 dprint "DEBUG = ${DEBUG}, LAYER = ${LAYER}, RCP_NAME = ${RCP_NAME}"
 
 #-- Validity checks
@@ -338,7 +340,7 @@ ${name}: Don't forget to:
  b) update your workspace conf/bblayers.conf file to include the layer that
     contains this recipe in the build
  c) update your workspace conf/local.conf file to include the recipe in the build
-    (typically via a \"IMAGE_INSTALL:append = \" ${RCP_NAME}\"\"
+    (typically via a IMAGE_INSTALL:append = \" ${RCP_NAME}\"
   TIP: doing a 'bitbake-layers show-recipes | grep -w xxx' one can check if recipe
   'xxx' is actually installed
  d) rebuild the project with 'bitbake <image-name>' and test
