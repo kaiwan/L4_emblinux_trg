@@ -65,7 +65,8 @@ cat <<- @EOF@ > conf/layer.conf
 	LAYER_DEPENDS_${layer_token2} = "core"
 	## TIP: UPDATE with later Yocto release names!
 	# ref: https://wiki.yoctoproject.org/wiki/Releases
-	LAYERSERIES_COMPAT_${layer_token2} = "dunfell hardknott"
+	# FIXME :: UPDATE the release names as required!
+	LAYERSERIES_COMPAT_${layer_token2} = "honister dunfell hardknott"
 @EOF@
 ls -l conf/layer.conf
 } # end setup_conf_layer_file()
