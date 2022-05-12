@@ -1,0 +1,25 @@
+#!/bin/bash
+[ $# -ne 1 ] && {
+	echo "Usage: $0 1 (right-to-left)
+       $0 2 (left-to-right)
+	"
+	exit 1
+}
+if [ $1 -eq 1 ]; then
+  sudo ./ledblink_bbb.sh 0
+  sleep .5
+  sudo ./ledblink_bbb.sh 1
+  sleep .5
+  sudo ./ledblink_bbb.sh 2
+  sleep .5
+  sudo ./ledblink_bbb.sh 3
+elif [ $1 -eq 2 ]; then
+  sudo ./ledblink_bbb.sh 3
+  sleep .5
+  sudo ./ledblink_bbb.sh 2
+  sleep .5
+  sudo ./ledblink_bbb.sh 1
+  sleep .5
+  sudo ./ledblink_bbb.sh 0
+fi
+
