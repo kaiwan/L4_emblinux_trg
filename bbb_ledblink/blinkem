@@ -1,4 +1,6 @@
 #!/bin/bash
+# Wrapper over our simple ledblink_bbb.sh script
+# NOTE: meant for the BeagleBone Black running standard Debian
 [ $# -ne 1 ] && {
 	echo "Usage: $0 1 (right-to-left)
        $0 2 (left-to-right)
