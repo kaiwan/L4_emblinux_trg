@@ -1,0 +1,24 @@
+#!/bin/bash
+PFX=/big/yocto_seccam_rpi0w/poky/build_rpi0w
+SDIMG_EXT3=${PFX}/tmp/deploy/images/raspberrypi0-wifi/core-image-base-raspberrypi0-wifi.ext3
+MNT=rpi_yct_rootfs
+
+echo "ASSUMPTION:
+Loop mounting this file as the rootfs:
+${SDIMG_EXT3}
+"
+
+[ ! -f ${SDIMG_EXT3} ] && {
+ echo "couldn't get ext3 sdcard image, aborting..."
+ exit 1
+}
+cp -f ${SDIMG_EXT3} .
+ls -lh ${SDIMG_EXT3}
+sudo umount ${MNT}/ 2>/dev/null
+sudo mount -o loop ${SDIMG_EXT3} ${MNT}/ || {
+  echo "loop mount failed"
+  exit 1
+}
+echo "Mounted at ${MNT}/"
+df -h |grep "${MNT}"
+
