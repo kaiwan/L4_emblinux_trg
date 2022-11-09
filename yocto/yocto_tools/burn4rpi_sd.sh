@@ -44,16 +44,16 @@ cmd="sudo umount /dev/${ofdisk}* 2>/dev/null; sync"
 eval "${cmd}"
 
 #cmd="sudo time -v dd if=${IMG} of=/dev/${ofdisk} bs=4M"
-cmd="sudo time dd if=${IMG} of=/dev/${ofdisk} bs=4M"
+cmd="time sudo dd if=${IMG} of=/dev/${ofdisk} bs=4M"
 echo "
 ${cmd}
 "
 
 [ ${interactive} -eq 1 ] && {
- echo "Please CAREFULLY VERIFY that this command is OK to run,
+ read -p "Please CAREFULLY VERIFY that this command is OK to run,
 ESPECIALLY the 'of' device !!!
 
-Press [Enter] to continue, ^C to abort ..." ; read -r
+Press [Enter] to continue, ^C to abort ... "
 }
 
 echo "[+] $(date): writing, pl wait ..."
