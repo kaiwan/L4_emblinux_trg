@@ -1,0 +1,63 @@
+#!/bin/bash
+# Kaiwan NB, kaiwanTECH
+name=$(basename $0)
+
+show_some_bb_vars()
+{
+# All vars (?) : https://docs.yoctoproject.org/current/genindex.html
+# is case-sensitive
+
+echo "--- Some bitbake variables ---"
+VARS2GET="\
+		ARCH CROSS_COMPILE \
+		BBFILES BUILDDIR \
+		CC CFLAGS CONFFILES CORE_IMAGE_EXTRA_INSTALL \
+		WORKDIR \
+		"
+
+for VAR in ${VARS2GET}
+do
+	echo -n "${VAR}: "
+	bitbake-getvar ${VAR} 2>/dev/null | tail -n1
+	echo
+done
+}
+
+
+#--- 'main'
+
+[ $# -ne 1 ] && {
+	echo "Usage: ${name} recipe-name  (without the meta- prefix)
+Tip: use
+	bitbake-layers show-recipes
+	bitbake-layers show-appends
+to get recipe names"
+	exit 1
+}
+
+show_some_bb_vars
+echo "--------------------------------------------------------
+"
+
+RECIPE="$1"
+
+echo "bitbake -c listtasks ${RECIPE}"
+bitbake -c listtasks ${RECIPE} 2>/dev/null
+
+echo "
+----------------------------------------------------------------------
+For recipe $1: WORKDIR/temp/run.do_compile : showing varaibles therein
+----------------------------------------------------------------------
+"
+W1=$(bitbake -e ${RECIPE} 2>/dev/null |grep -w "^WORKDIR" | awk -F'=' '{print $2}' |cut -d"\"" -f2)
+[ -z "${W1}" ] && {
+	echo "Couldn't get WORKDIR for recipe \"${RECIPE}\""
+	exit 1
+}
+
+#cat ${WORKDIR}/temp/run.do_compile
+# See all vars for this recipe
+echo "--------------------------------------------------------
+"
+[ -f ${W1}/temp/run.do_compile ] && grep "^export" ${W1}/temp/run.do_compile |cut -d' ' -f2-
+
