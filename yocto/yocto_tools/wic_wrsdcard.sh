@@ -3,6 +3,10 @@
 # Generate and dd wic image for the BBB - BeagleBone Black ! - onto an uSD card
 name=$(basename $0)
 
+### UPDATE as required ###
+MACH=${MACHINE} #beaglebone-yocto
+REF_IMAGE_TARGET=core-image-base   # core-image-minimal
+
 #-------------- r u n c m d -------------------------------------------
 # Display and run the provided command.
 # Parameter 1 : the command to run
@@ -36,17 +40,15 @@ eval "$*" || {
 }
 }
 
-MACH=beaglebone-yocto
-REF_IMAGE_TARGET=core-image-base   # core-image-minimal
 # Parameters:
-#  $1 : the (temp) folder to write the image into
+#  $1 : machine name
 gen_wic_img()
 {
 # If another target dir's soecified w/ --outdir , then it fails with
 #  fstab not present? aborting...
-runcmd_failchk 1 "wic create ${MACH} -e ${REF_IMAGE_TARGET}"  # --outdir $1"
+runcmd_failchk 1 "wic create ${1} -e ${REF_IMAGE_TARGET}"  # --outdir $1"
 echo "---------------------------------------------------"
-ls -lht ${MACH}-*-mmcblk0.direct*
+ls -lht ${1}-*-mmcblk0.direct*
 echo "---------------------------------------------------"
 }
 
@@ -111,7 +113,13 @@ which wic >/dev/null 2>&1 || {
   exit 1
 }
  
-gen_wic_img
+[ $# -ne 1 ] && {
+	echo "Usage: ${name} MACHINE-name"
+	exit 1
+}
+MACH=$1
+
+gen_wic_img ${MACH}
 imgfile=$(ls -t ${MACH}-*-mmcblk0.direct |col|head -n1)
 write_wic_img "${imgfile}"
 # Get rid of the older wic images
