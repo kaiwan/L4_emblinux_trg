@@ -139,13 +139,13 @@ bitbake ${POKY_IMAGE_TO_BUILD}
 
 ### Keep UPDATED !
 # ref: https://www.yoctoproject.org/software-overview/downloads/
-LATEST_YOCTO_RELNAME="kirkstone"
-LATEST_YOCTO_RELVER="4.0.4"
+LATEST_YOCTO_RELNAME="langdale"
+LATEST_YOCTO_RELVER="4.1"
 ###
 [ $# -ne 2 ] && {
   echo "Usage: ${name} yocto-dir yocto-release-name-to-clone"
   echo "This script requires two parameters"
-  echo "1. yocto-dir : to create and populate with the Yocto project (shouldn't already exist)"
+  echo "1. yocto-dir : to create and populate with the Yocto project (it shouldn't already exist)"
   echo "2. yocto-release-name-to-clone : check latest (or whichever one you want) on https://www.yoctoproject.org/software-overview/downloads/
    F.e. the latest (as of this script) is named '${LATEST_YOCTO_RELNAME}' ver $LATEST_YOCTO_RELVER)
    For this param, just specify the release name."
