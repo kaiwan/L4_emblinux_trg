@@ -1,5 +1,7 @@
 #!/bin/bash
-# Kaiwan NB, kaiwanTECH
+# showvars2
+# (c) Kaiwan NB, kaiwanTECH
+# License: MIT
 name=$(basename $0)
 
 show_some_bb_vars()
@@ -9,23 +11,23 @@ show_some_bb_vars()
 
 echo "--- Some common bitbake variables ---"
 VARS2GET="\
-		ARCH CROSS_COMPILE \
-		BBFILES BUILDDIR \
-		CC CFLAGS CONFFILES CORE_IMAGE_EXTRA_INSTALL \
-		DISTRO DISTRO_NAME DISTROOVERRIDES \
-		EXTRA_IMAGE_FEATURES EXTRA_OEMAKE EXTRA_USERS_PARAMS \
-		FILES \
-		IMAGE_BASENAME IMAGE_FEATURES IMAGE_FSTYPES IMAGE_ROOTFS IMAGE_ROOTFS_EXTRA_SPACE \
-		 IMAGE_ROOTFS_SIZE INHIBIT_PACKAGE_DEBUG_SPLIT INHIBIT_PACKAGE_STRIP INITRAMFS_IMAGE \
-		 INITSCRIPT_NAME \
-		KERNEL_FEATURES KERNEL_VERSION KARCH KBRANCH KBUILD_DEFCONFIG \
-		WORKDIR \
-		"
+	ARCH CROSS_COMPILE \
+	BBFILES BUILDDIR \
+	CC CFLAGS CONFFILES CORE_IMAGE_EXTRA_INSTALL \
+	DISTRO DISTRO_NAME DISTROOVERRIDES \
+	EXTRA_IMAGE_FEATURES EXTRA_OEMAKE EXTRA_USERS_PARAMS \
+	FILES \
+	IMAGE_BASENAME IMAGE_FEATURES IMAGE_FSTYPES IMAGE_ROOTFS IMAGE_ROOTFS_EXTRA_SPACE \
+	 IMAGE_ROOTFS_SIZE INHIBIT_PACKAGE_DEBUG_SPLIT INHIBIT_PACKAGE_STRIP INITRAMFS_IMAGE \
+	 INITSCRIPT_NAME \
+	KERNEL_FEATURES KERNEL_VERSION KARCH KBRANCH KBUILD_DEFCONFIG \
+	WORKDIR \
+"
 	#TODO- more to fill in
 
 for VAR in ${VARS2GET}
 do
-	#cat tmp/deploy/images/qemuarm64/core-image-base-qemuarm64.testdata.json | jq --raw-output '.<varname>'	
+	# how: cat tmp/deploy/images/qemuarm64/core-image-base-qemuarm64.testdata.json | jq --raw-output '.<varname>'	
 	local VAL=$(cat ${TESTDATA_JSON} | jq --raw-output ".${VAR}")
 	[[ ! -z "${VAL}" && "${VAL}" != "null" ]] && echo "${VAR}:${VAL}"
 done
@@ -62,36 +64,12 @@ echo
 for VAR in "$@"
 do
 	#echo "p = ${VAR}"
-	#cat tmp/deploy/images/qemuarm64/core-image-base-qemuarm64.testdata.json | jq --raw-output '.<varname>'	
+	# how: cat tmp/deploy/images/qemuarm64/core-image-base-qemuarm64.testdata.json | jq --raw-output '.<varname>'	
 	VAL=$(cat ${TESTDATA_JSON} | jq --raw-output ".${VAR}")
-	[[ ! -z "${VAL}" && "${VAL}" != "null" ]] && echo "${VAR}:${VAL}"
+	if [[ ! -z "${VAL}" && "${VAL}" != "null" ]] ; then
+		echo "${VAR}:${VAL}"
+	else
+		echo "${VAR}:<null>"
+	fi
 done
 exit 0
-
-
-
-echo "--------------------------------------------------------
-"
-
-RECIPE="$1"
-
-echo "bitbake -c listtasks ${RECIPE}"
-bitbake -c listtasks ${RECIPE} 2>/dev/null
-
-echo "
-----------------------------------------------------------------------
-For recipe $1: WORKDIR/temp/run.do_compile : showing varaibles therein
-----------------------------------------------------------------------
-"
-W1=$(bitbake -e ${RECIPE} 2>/dev/null |grep -w "^WORKDIR" | awk -F'=' '{print $2}' |cut -d"\"" -f2)
-[ -z "${W1}" ] && {
-	echo "Couldn't get WORKDIR for recipe \"${RECIPE}\""
-	exit 1
-}
-
-#cat ${WORKDIR}/temp/run.do_compile
-# See all vars for this recipe
-echo "--------------------------------------------------------
-"
-[ -f ${W1}/temp/run.do_compile ] && grep "^export" ${W1}/temp/run.do_compile |cut -d' ' -f2-
-
