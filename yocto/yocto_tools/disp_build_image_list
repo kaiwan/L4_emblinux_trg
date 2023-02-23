@@ -8,7 +8,8 @@ setup_env #-q
 
 for IMG in $(ls ../meta*/recipes*/images/*.bb)
 do
-	echo "$(basename ${IMG})"
+	printf "%-36s: %s\n" $(basename ${IMG}) $(dirname ${IMG})
+	#echo "$(basename ${IMG})"
 done
 
 exit 0
