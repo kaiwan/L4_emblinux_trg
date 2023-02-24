@@ -2,43 +2,16 @@
 # wic_wrsdcard.sh
 # Generate and dd wic image for the BBB - BeagleBone Black ! - onto an uSD card
 name=$(basename $0)
+# Turn on unofficial Bash 'strict mode'! V useful
+# "Convert many kinds of hidden, intermittent, or subtle bugs into immediate, glaringly obvious errors"
+# ref: http://redsymbol.net/articles/unofficial-bash-strict-mode/ 
+set -euo pipefail
 
-### UPDATE as required ###
-MACH=${MACHINE} #beaglebone-yocto
-REF_IMAGE_TARGET=core-image-base   # core-image-minimal
-
-#-------------- r u n c m d -------------------------------------------
-# Display and run the provided command.
-# Parameter 1 : the command to run
-runcmd()
-{
-SEP="------------------------------"
-[ $# -eq 0 ] && return
-echo "${SEP}
-$*"
-eval "$*"
+PFX=$(dirname "$(which "$0")")    # dir in which the common code and tools reside
+source "${PFX}"/common || {
+  echo "${name}: could not source 'common' script, aborting..." ; exit 1
 }
 
-#-------------- r u n c m d _ f a i l c h k ---------------------------
-# Display and run the provided command; check for failure case
-#  Parameter 1 : 0 => non-fatal, +ve => fatal exit with this error val
-#  Parameter 2... : the command to run
-runcmd_failchk()
-{
-SEP="------------------------------"
-[ $# -eq 0 ] && return
-local errcode=$1
-shift
-echo "${SEP}
-$*"
-eval "$*" || {
-  echo -n " *WARNING* execution failure"
-  if [ ${errcode} -ne 0 ] ; then
-    echo " : FATAL error (${errcode}), aborting now"
-    exit ${errcode}
-  fi
-}
-}
 
 # Parameters:
 #  $1 : machine name
@@ -46,7 +19,7 @@ gen_wic_img()
 {
 # If another target dir's soecified w/ --outdir , then it fails with
 #  fstab not present? aborting...
-runcmd_failchk 1 "wic create ${1} -e ${REF_IMAGE_TARGET}"  # --outdir $1"
+runcmd_failchk 1 "wic create ${1} -e ${IMAGE_BASENAME}"  # --outdir $1"
 echo "---------------------------------------------------"
 ls -lht ${1}-*-mmcblk0.direct*
 echo "---------------------------------------------------"
@@ -112,15 +85,16 @@ which wic >/dev/null 2>&1 || {
 (must cd to the Yocto workspace and run 'source oe-init-build-env <build-dir>' first"
   exit 1
 }
- 
-[ $# -ne 1 ] && {
-	echo "Usage: ${name} MACHINE-name"
-	exit 1
-}
-MACH=$1
+setup_env #-q
 
-gen_wic_img ${MACH}
-imgfile=$(ls -t ${MACH}-*-mmcblk0.direct |col|head -n1)
+IMAGE_BASENAME=$(${PFX}/showvars2 |grep "^IMAGE_BASENAME" |cut -d: -f2)
+[[ -z "${IMAGE_BASENAME}" ]] && failit "couldn't fetch value of IMAGE_BASENAME"
+MACHINE=$(${PFX}/showvars2 MACHINE |grep "^MACHINE" |cut -d: -f2|tail -n1)
+[[ -z "${MACHINE}" ]] && failit "couldn't fetch value of MACHINE"
+ 
+gen_wic_img ${MACHINE}
+imgfile=$(ls -t ${MACHINE}-*-mmcblk0.direct |col|head -n1)
+[[ -z "${imgfile}" ]] && failit "couldn't get machine image filename"
 write_wic_img "${imgfile}"
 # Get rid of the older wic images
 rm_older

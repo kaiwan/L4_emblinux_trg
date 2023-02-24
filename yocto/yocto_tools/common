@@ -92,6 +92,27 @@ $*"
 eval "$*"
 }
 
+#-------------- r u n c m d _ f a i l c h k ---------------------------
+# Display and run the provided command; check for failure case
+#  Parameter 1 : 0 => non-fatal, +ve => fatal exit with this error val
+#  Parameter 2... : the command to run
+runcmd_failchk()
+{
+SEP="------------------------------"
+[ $# -eq 0 ] && return
+local errcode=$1
+shift
+echo "${SEP}
+$*"
+eval "$*" || {
+  echo -n " *WARNING* execution failure"
+  if [ ${errcode} -ne 0 ] ; then
+    echo " : FATAL error (${errcode}), aborting now"
+    exit ${errcode}
+  fi
+}
+}
+
 #------ g e t _ y n _ r e p l y ---------------------------------------
 # User's reply should be Y or N.
 # Returns:
@@ -139,7 +160,7 @@ QP()
 # CALLER's responsibility to check for NULL return
 pick_latest_file()
 {
-local IMG=$(ls -t ${YOCTO_PFX}/${BUILD_DIR}/tmp/deploy/images/${MACH}/${BUILD_IMAGE}-${MACH}*${1}* 2>/dev/null |head -n1)
+local IMG=$(ls -t -1 ${YOCTO_PFX}/${BUILDDIR}/tmp/deploy/images/${MACH}/${BUILD_IMAGE}-${MACH}*${1}* 2>/dev/null |head -n1)
 IMG=$(realpath "${IMG}" 2>/dev/null)
 echo "${IMG}"
 }
