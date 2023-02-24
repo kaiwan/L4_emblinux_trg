@@ -43,11 +43,10 @@ In any case, some common bitbake variable values will be displayed"
 
 #--- 'main'
 
-[[ $# -ge 1 && "$1" = "-h" ]] && {
+[[ $# -eq 1 && "$1" = "-h" ]] && {
 	usage
 	exit 0
 }
-
 PFX=$(dirname "$(which "$0")")    # dir in which the common code and tools reside
 source "${PFX}"/common || {
   echo "${name}: could not source 'common' script, aborting..." ; exit 1
