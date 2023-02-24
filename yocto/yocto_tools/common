@@ -9,6 +9,7 @@
 # "Convert many kinds of hidden, intermittent, or subtle bugs into immediate, glaringly obvious errors"
 # ref: http://redsymbol.net/articles/unofficial-bash-strict-mode/ 
 set -euo pipefail
+#YOCTO_DIR="/opt"
 
 #name=$(basename $0)
 export DEBUG=0
@@ -47,15 +48,15 @@ set -u
 #export MACH=$(grep -w "^MACHINE" conf/local.conf |tail -n1|cut -d'=' -f2|cut -d'"' -f2)
 
 # Better way - get vars from the JSON testdata file!
-#cat tmp/deploy/images/qemuarm64/core-image-base-qemuarm64.testdata.json | jq --raw-output '.<var>'
-
+# How? cat tmp/deploy/images/qemuarm64/core-image-base-qemuarm64.testdata.json | jq --raw-output '.<var>'
+# So first gather the vars for machine, image name..
 local MACH=$(\ls -1t ${BUILDDIR}/tmp/deploy/images/ |head -n1)  # ASSUME it's the latest one (if not the only)
 [[ -z "${MACH}" ]] && failit "couldn't get value of machine var"
 if [[ -d ${BUILDDIR}/buildhistory ]] ; then
    local IMAGE_NAME=$(ls -1 buildhistory/images/${MACH}/glibc/)
    [[ -z "${IMAGE_NAME}" ]] && failit "couldn't get value of IMAGE_NAME var"
 else
-	failit "${name}: require buildhistory turned on (to get reqd vars)
+	failit "${name}: require 'buildhistory' turned on (to get reqd vars)
 To do so, insert this line into your conf/local.conf:
 INHERIT += \"buildhistory\""
 fi
