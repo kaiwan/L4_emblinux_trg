@@ -1,6 +1,11 @@
 #!/bin/bash
 # Kaiwan NB, kaiwanTECH
 name=$(basename $0)
+PFX=$(dirname "$(which "$0")")    # dir in which the common code and tools reside
+source "${PFX}"/common || {
+  echo "${name}: could not source 'common' script, aborting..." ; exit 1
+}
+setup_env -q
 
 show_some_bb_vars()
 {
@@ -50,7 +55,8 @@ echo "--------------------------------------------------------
 RECIPE="$1"
 
 echo "bitbake -c listtasks ${RECIPE}"
-bitbake -c listtasks ${RECIPE} 2>/dev/null
+bitbake -c listtasks ${RECIPE} #2>/dev/null
+[[ $? -ne 0 ]] && failit "couldn't list tasks for recipe"
 
 echo "
 ----------------------------------------------------------------------
@@ -58,14 +64,11 @@ For recipe $1: WORKDIR/temp/run.do_compile : showing varaibles therein
 ----------------------------------------------------------------------
 "
 W1=$(bitbake -e ${RECIPE} 2>/dev/null |grep -w "^WORKDIR" | awk -F'=' '{print $2}' |cut -d"\"" -f2)
-[ -z "${W1}" ] && {
-	echo "Couldn't get WORKDIR for recipe \"${RECIPE}\""
-	exit 1
-}
+[ -z "${W1}" ] && failit "Couldn't get WORKDIR for recipe \"${RECIPE}\""
 
 #cat ${WORKDIR}/temp/run.do_compile
 # See all vars for this recipe
 echo "--------------------------------------------------------
 "
-[ -f ${W1}/temp/run.do_compile ] && grep "^export" ${W1}/temp/run.do_compile |cut -d' ' -f2-
+[ -f ${W1}/temp/run.do_listtasks ] && grep "^export" ${W1}/temp/run.do_listtasks |cut -d' ' -f2-
 
