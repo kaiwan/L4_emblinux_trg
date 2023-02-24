@@ -1,0 +1,61 @@
+#!/bin/bash
+# Display possible values for the SECTION="xxx" portion of a Yocto Bitbake recipe.
+# The raw 'section' data file's - the source of all this info - is this one:
+# http://git.openembedded.org/openembedded/plain/docs/usermanual/reference/var_section.xml
+# It's content is saved here as the file raw_section_names.txt.
+# Kaiwan NB, kaiwanTECH
+# License: MIT
+
+# Turn on unofficial Bash 'strict mode'! V useful
+# "Convert many kinds of hidden, intermittent, or subtle bugs into immediate, glaringly obvious errors"
+# ref: http://redsymbol.net/articles/unofficial-bash-strict-mode/ 
+set -euo pipefail
+
+INFILE=raw_section_names.txt
+TMPF=.raw.txt
+ORIG_IFS=${IFS}
+export IFS=$'\n'
+
+cp ${INFILE} ${TMPF}
+#--- preprocess
+# rm all empty lines
+sed -i '/^\s*$/d' ${TMPF}
+# trim whitespace, leading & trailing!
+awk '{$1=$1;print}' ${TMPF} > t2
+
+# get all lines only between <row> and </row>
+sed -n '/<row>/, /<\/row>/{ /<\/row>/! p }' t2 > t3
+# rm irrelevant lines
+sed '/<row>/d ; /<entry><\/entry>/d' t3 > t4
+# get all lines only between <entry> and </entry>
+sed -n '/<entry>/, /<entry>/{ p }' t4 > t5
+#---
+
+for rec in $(cat t5)
+do
+   #echo "rec = \"${rec}\""
+   # print the section name
+   # filter in: ^<entry>...</entry>$
+   echo "$rec" | grep "^<entry>.*</entry>$" >/dev/null && { 
+		sec_name=$(echo ${rec} |cut -c8- |rev |cut -c9- |rev)
+		echo "$sec_name"
+	}
+
+   # indent the section description
+   echo "$rec" | grep -v "^<entry>.*</entry>$" >/dev/null && {
+		# rm the beginning <entry> anchor
+	   if echo "${rec}" | grep "^<entry>" >/dev/null ; then
+		   echo -n "   "
+		   echo "${rec}" |cut -c8- -
+		# rm the end </entry> anchor
+	   elif echo "${rec}" | grep "</entry>$" >/dev/null ; then
+		   echo "   ${rec}" |rev|cut -c9- -|rev
+	   else
+			echo "   $rec"
+	   fi
+   }
+done
+
+rm -f ${TMPF} t2 t3 t4 t5 2>/dev/null
+IFS=${ORIG_IFS}
+exit 0
