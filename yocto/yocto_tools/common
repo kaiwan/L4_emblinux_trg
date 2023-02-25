@@ -33,13 +33,24 @@ set +u
 [ -z "${BUILDDIR}" ] && {
   echo "${name}: we expect you to be running this script from within your Yocto workspace.
 So, you need to do that - source the Yocto environment first; typically:
-cd <yocto-workspace>
-source oe-init-build-env <build-dir>
+cd <yocto-workspace>/
+source oe-init-build-env [build-dir]
 
 Perhaps you have a fully setup Yocto workspace but are running this script from another directory;
-in this case, simply switch to your Yocto workspace and run it from there."
+in this case, simply switch to your Yocto workspace and run it from there, f.e., like this:
+~/L4_emblinux_trg/yocto/yocto_tools/${name} [-d] meta-<layername> <recipe-name>"
   exit 1
 }
+[[ ! -d ${BUILDDIR} ]] && failit "The default 'yocto' build directory specified
+ \"${BUILDDIR}\"
+does not exist.
+
+Pl setup your Yocto workspace first (i.e.
+ cd to your Yocto workspace (cd <...>/poky)
+ source oe-init-build-env [build-dir]
+) and then run this tool...
+"
+
 set -u
 [ ! -f conf/local.conf ] && {
   echo "${name}: we expect you to have sourced the oe-init-build-env and be in the Yocto build dir"
@@ -56,7 +67,7 @@ if [[ -d ${BUILDDIR}/buildhistory ]] ; then
    local IMAGE_NAME=$(ls -1 buildhistory/images/${MACH}/glibc/)
    [[ -z "${IMAGE_NAME}" ]] && failit "couldn't get value of IMAGE_NAME var"
 else
-	failit "${name}: require 'buildhistory' turned on (to get reqd vars)
+	failit "require 'buildhistory' turned on (to get reqd vars)
 To do so, insert this line into your conf/local.conf:
 INHERIT += \"buildhistory\""
 fi
