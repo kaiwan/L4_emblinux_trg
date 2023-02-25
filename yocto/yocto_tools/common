@@ -11,7 +11,7 @@
 set -euo pipefail
 #YOCTO_DIR="/opt"
 
-#name=$(basename $0)
+name=$(basename $0)
 export DEBUG=0
 dprint()
 {
@@ -70,12 +70,12 @@ if [[ $# -ge 1 && "$1" = "-q" ]] ; then
 	set -e
 	return
 else
-  echo "${name}: current workspace/build config:
+  echo "[--- WRT your current Yocto workspace/build config:
 BUILDDIR = ${BUILDDIR}
 MACHINE  = ${MACH}
 IMAGE    = ${IMAGE_NAME}
 TESTDATA_JSON file = ${TESTDATA_JSON}
-"
+---]"
 	set -e
 fi
 }
