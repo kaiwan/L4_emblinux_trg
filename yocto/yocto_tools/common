@@ -21,8 +21,8 @@ echo "<D> $*"
 
 failit()
 {
-echo >&2 "$*"
-exit 1
+	echo >&2 "FATAL:$(basename $0) :: $*"
+	exit 1
 }
 
 # Params:
