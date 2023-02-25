@@ -1,24 +1,34 @@
 #!/bin/bash
-PFX=/big/yocto_seccam_rpi0w/poky/build_rpi0w
-SDIMG_EXT3=${PFX}/tmp/deploy/images/raspberrypi0-wifi/core-image-base-raspberrypi0-wifi.ext3
-MNT=rpi_yct_rootfs
+# Turn on unofficial Bash 'strict mode'! V useful
+# "Convert many kinds of hidden, intermittent, or subtle bugs into immediate, glaringly obvious errors"
+# ref: http://redsymbol.net/articles/unofficial-bash-strict-mode/ 
+set -euo pipefail
 
-echo "ASSUMPTION:
-Loop mounting this file as the rootfs:
-${SDIMG_EXT3}
+export name=$(basename "$0")
+PFX=$(dirname "$(which "$0")")    # dir in which the common code and tools reside
+source "${PFX}"/common || {
+  echo "${name}: could not source 'common' script, aborting..." ; exit 1
+}
+setup_env #-q
+
+MNT=/mnt/yocto_rootfs
+IMAGE_BASENAME=$(${PFX}/showvars2 |grep "^IMAGE_BASENAME" |cut -d: -f2)
+[[ -z "${IMAGE_BASENAME}" ]] && failit "couldn't fetch value of IMAGE_BASENAME"
+MACHINE=$(${PFX}/showvars2 MACHINE |grep "^MACHINE" |cut -d: -f2|tail -n1)
+[[ -z "${MACHINE}" ]] && failit "couldn't fetch value of MACHINE"
+
+EXT4_IMG=$(ls -1t tmp/deploy/images/${MACHINE}/${IMAGE_BASENAME}-${MACHINE}.ext[34] |head -n1)
+[[ ! -f ${EXT4_IMG} ]] && failit "couldn't fetch ext[34] image file path"
+#echo "EXT4_IMG = $EXT4_IMG"
+EXT4_IMG=$(realpath ${EXT4_IMG})
+echo "Loop mounting this file
+${EXT4_IMG}
+as the rootfs, on mount point ${MNT} ...
 "
 
-[ ! -f ${SDIMG_EXT3} ] && {
- echo "couldn't get ext3 sdcard image, aborting..."
- exit 1
-}
-cp -f ${SDIMG_EXT3} .
-ls -lh ${SDIMG_EXT3}
-sudo umount ${MNT}/ 2>/dev/null
-sudo mount -o loop ${SDIMG_EXT3} ${MNT}/ || {
-  echo "loop mount failed"
-  exit 1
-}
-echo "Mounted at ${MNT}/"
+sudo mkdir -p ${MNT} 2>/dev/null
+sudo umount ${MNT}/ 2>/dev/null || true
+sudo mount -o loop ${EXT4_IMG} ${MNT}/ || failit "loop mount failed" && true
 df -h |grep "${MNT}"
-
+echo "Mounted; *** DON'T forget to umount it when done !!! ***"
+exit 0
