@@ -5,13 +5,18 @@
 set -euo pipefail
 
 export name=$(basename "$0")
+MNT=/mnt/yocto_rootfs
+if mount|grep ${MNT} ; then
+	echo "${name}: already mounted?"
+	exit 1
+fi
+
 PFX=$(dirname "$(which "$0")")    # dir in which the common code and tools reside
 source "${PFX}"/common || {
   echo "${name}: could not source 'common' script, aborting..." ; exit 1
 }
 setup_env #-q
 
-MNT=/mnt/yocto_rootfs
 IMAGE_BASENAME=$(${PFX}/showvars2 |grep "^IMAGE_BASENAME" |cut -d: -f2)
 [[ -z "${IMAGE_BASENAME}" ]] && failit "couldn't fetch value of IMAGE_BASENAME"
 MACHINE=$(${PFX}/showvars2 MACHINE |grep "^MACHINE" |cut -d: -f2|tail -n1)
