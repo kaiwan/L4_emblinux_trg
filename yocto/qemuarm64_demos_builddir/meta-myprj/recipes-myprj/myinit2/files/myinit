@@ -1,0 +1,5 @@
+#!/bin/sh
+echo "$(date):++++++++++++ In $0 ! ++++++++++++++" |tee -a /mylog
+# Do whatever's required...
+modprobe nls_utf8
+modprobe can
