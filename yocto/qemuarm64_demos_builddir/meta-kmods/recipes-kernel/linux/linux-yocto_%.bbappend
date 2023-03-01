@@ -4,5 +4,5 @@ SRC_URI += " file://defconfig \
 	"
 
 do_kernel_configme_prepend() {
-  bbplain ">>> kernel config: linux-raspberrypi_%.bbappend here"
+  bbplain ">>> kernel config: linux-yocto_%.bbappend here"
 }
