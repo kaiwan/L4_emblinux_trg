@@ -1,0 +1,9 @@
+[Match]
+Name=en*
+KernelCommandLine=!nfsroot
+
+[Network]
+DHCP=ipv4
+
+[DHCPv4]
+UseHostname=false

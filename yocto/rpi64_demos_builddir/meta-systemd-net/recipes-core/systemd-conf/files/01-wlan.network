@@ -1,0 +1,18 @@
+# ref: https://www.freedesktop.org/software/systemd/man/systemd.network.html
+[Match]
+Name=wlan*
+KernelCommandLine=!nfsroot
+
+[Network]
+DHCP=ipv4
+#Address=192.168.1.201/24
+#Gateway=192.168.1.1
+DHCPServer=true
+DNSSEC=no
+DNS=192.168.1.1 
+DNS=8.8.8.8
+#IPv4RouteLocalnet=true
+
+[DHCPv4]
+UseDNS=true
+UseHostname=false

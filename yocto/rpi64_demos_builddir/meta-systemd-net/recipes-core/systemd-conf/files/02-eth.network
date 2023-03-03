@@ -1,0 +1,9 @@
+[Match]
+Name=eth*
+KernelCommandLine=!nfsroot
+
+[Network]
+DHCP=ipv4
+
+[DHCPv4]
+UseHostname=false
