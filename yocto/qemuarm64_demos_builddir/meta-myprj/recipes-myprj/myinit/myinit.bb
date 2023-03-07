@@ -26,13 +26,13 @@ RDEPENDS:${PN} = "bash"
 
 # Location of files
 #  Tip: append '; unpack=0 \' to not unpack the file
-SRC_URI = " file://0setup_rpi.sh \
+SRC_URI = " file://0setup.sh \
    "
 
 # The FILE_${PN} addition below is required to avoid the 'installed but not shipped in any package'
 # error; it's left commented out by default
-FILES:${PN} += "${base_prefix}/ 0setup_rpi.sh \"
-#FILES_${PN} += "${base_prefix}/ file://0setup_rpi.sh \"
+FILES:${PN} += "${base_prefix}/ 0setup.sh \"
+#FILES_${PN} += "${base_prefix}/ file://0setup.sh \"
 
 IMAGE_FEATURES += " package-management"
 
@@ -68,8 +68,8 @@ do_install () {
 	#  ln -s ../init.d/myprg_install.sh S99myprg
 
 	install -d -m 0755 ${D}${sbindir}
-	install -m 0755 ${S}/0setup_rpi.sh ${D}${sbindir}
-	# create slink : /0setup -> /usr/sbin/0setup_rpi.sh
+	install -m 0755 ${S}/0setup.sh ${D}${sbindir}
+	# create slink : /0setup -> /usr/sbin/0setup.sh
 	cd ${D}
-	ln -s ${sbindir}/0setup_rpi.sh .
+	ln -s ${sbindir}/0setup.sh .
 }
