@@ -1,5 +1,11 @@
 #!/bin/sh
-echo "$(date):++++++++++++ In $0 ! ++++++++++++++" |tee -a /mylog
+# This script runs at runlevel 5
+(
+echo "$(date):++++++++++++ In $0 ! ++++++++++++++"
 # Do whatever's required...
 #modprobe nls_utf8
 #modprobe can
+
+# Run our demo Qt5 GUI Hello, world app!
+export DISPLAY=:0 && /usr/bin/qt1
+) >> /mylog 2>&1

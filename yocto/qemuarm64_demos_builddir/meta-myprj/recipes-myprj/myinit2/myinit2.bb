@@ -67,9 +67,9 @@ do_install () {
 	#  cd /etc/rc5.d
 	#  ln -s ../init.d/myprg_install.sh S99myprg
 	install -d -m 0755 ${D}/etc/init.d
-	install -d -m 0755 ${D}/etc/rc3.d
+	install -d -m 0755 ${D}/etc/rc5.d
 	install -m 0755 ${S}/myinit ${D}/etc/init.d
-	# create slink : /etc/rc3.d/S99myinit -> /etc/init.d/myinit
-	cd ${D}/etc/rc3.d
-	ln -s ../init.d/myinit S99myinit
+	# create slink : /etc/rc5.d/S99myinit -> /etc/init.d/myinit
+	cd ${D}/etc/rc5.d
+	ln -s ../init.d/myinit S99myinitgui
 }
