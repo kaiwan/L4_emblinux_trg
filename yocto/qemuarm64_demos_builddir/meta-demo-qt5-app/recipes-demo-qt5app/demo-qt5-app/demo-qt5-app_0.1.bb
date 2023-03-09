@@ -42,7 +42,6 @@ SRC_URI = " file://qt1.pro \
 # error; it's left commented out by default
 # (Note- honister 3.4 onwards, the syntax is of the form x:y not x_y !
 FILES_${PN} += "${bindir}/qt1"
-ALLOW_EMPTY_${PN} = "1" 
 
 S = "${WORKDIR}"
 
@@ -60,18 +59,12 @@ do_compile () {
 }
 
 do_install_append () {
-	# Specify install commands here; examples below:
-	# (1) create a dir /etc/init.d with:
-	#  install -d -m 0755 ${D}/etc/init.d
-	# (2) Tip: to generate a soft link, first cd to the dir and then create it;
-	#  cd /etc/rc5.d
-	#  ln -s ../init.d/myprg_install.sh S99myprg
-
-	# Install application
     install -d ${D}${bindir}
     install -m 0755 ${S}/qt1 ${D}${bindir}/
 	# while debugging...
-	bbplain 'do_install_append; (ls -l ${D}${bindir}/qt1)'
+	bbplain 'do_install_append: (${D}${bindir}/qt1)'
+	# TIP- while dbg, I used 'bitbake demo-qt5-app -c devshell' as well to get
+	# into it's WORKDIR and figure things out!
 
     # Uncomment if you want to autostart this application as a service     
     #install -Dm 0644 ${WORKDIR}/myguiapp.service ${D}${systemd_system_unitdir}/myguiapp.service
