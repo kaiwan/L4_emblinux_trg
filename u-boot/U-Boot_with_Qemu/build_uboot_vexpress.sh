@@ -14,7 +14,7 @@
 name=$(basename $0)
 
 ##################### UPDATE as required
-export CXX=arm-linux-gnueabihf-  # toolchain prefix ; tc to use; expect that the PATH is setup..
+export CXX=arm-linux-gnueabi-  #hf-  # toolchain prefix ; tc to use; expect that the PATH is setup..
 #export CXX=arm-none-eabi-  # toolchain prefix ; tc to use; expect that the PATH is setup..
 #export CXX=arm-none-linux-gnueabi-  # toolchain prefix ; tc to use; expect that the PATH is setup..
 ###------###
@@ -120,7 +120,7 @@ usage()
 
 # We expect that the toolchain path is in the PATH env var
 which ${CXX}gcc > /dev/null 2>&1 || {
-  echo "$name: Cross toolchain does not seem to be valid! PATH issue? Aborting..."
+  echo "$name: Cross compiler ${CXX}gcc does not seem to be valid! PATH issue? Aborting..."
   exit 1
 }
 echo "Cross compiler:
