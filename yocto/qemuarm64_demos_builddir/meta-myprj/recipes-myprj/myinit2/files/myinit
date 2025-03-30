@@ -8,4 +8,7 @@ echo "$(date):++++++++++++ In $0 ! ++++++++++++++"
 
 # Run our demo Qt5 GUI Hello, world app!
 export DISPLAY=:0 && /usr/bin/qt1
+
+# run the X11 VNC server
+x11vnc &
 ) >> /mylog 2>&1
